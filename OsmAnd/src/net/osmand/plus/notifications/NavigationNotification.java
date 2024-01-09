@@ -153,7 +153,8 @@ public class NavigationNotification extends OsmandNotification {
 			int turnImminent = 0;
 			int nextTurnDistance = 0;
 			int nextNextTurnDistance = 0;
-			TurnType nextNextTurnType = null;
+			String nextNextTurnDescription = "";
+			String nextTurnDescription = "";
 			RouteDirectionInfo ri = null;
 			if (routingHelper.isRouteCalculated() && routingHelper.isFollowingMode()) {
 				deviatedFromRoute = routingHelper.isDeviatedFromRoute();
@@ -170,9 +171,10 @@ public class NavigationNotification extends OsmandNotification {
 						turnType = r.directionInfo.getTurnType();
 						nextTurnDistance = r.distanceTo;
 						turnImminent = r.imminent;
+						nextTurnDescription = r.directionInfo.getDescriptionRoutePart();
 						NextDirectionInfo next = routingHelper.getNextRouteDirectionInfoAfter(r, calc1, true);
 						nextNextTurnDistance = next.distanceTo;
-						nextNextTurnType = next.directionInfo.getTurnType();
+						nextNextTurnDescription = next.directionInfo.getDescriptionRoutePart();
 					}
 				}
 
@@ -186,10 +188,9 @@ public class NavigationNotification extends OsmandNotification {
 					turnBitmap = drawableToBitmap(drawable);
 				}
 
-				String[] nextTurnTypeSplit = {turnType != null ? RouteCalculationResult.toString(turnType, app, true) : ""};
-				String nextTurnTypeFull = nextTurnTypeSplit[0];
-				if (nextTurnTypeFull.length() > 1) {
-					nextTurnTypeSplit = nextTurnTypeFull.split(" ", 2);
+				String[] nextTurnTypeSplit = {nextTurnDescription};
+				if (nextTurnDescription.length() > 0) {
+					nextTurnTypeSplit = nextTurnDescription.split(" ", 2);
 				}
 
 				notificationTitle = OsmAndFormatter.getFormattedDistance(nextTurnDistance, app).replace(" ", "") + " " + nextTurnTypeSplit[0];
@@ -201,7 +202,7 @@ public class NavigationNotification extends OsmandNotification {
 					// notificationText.append(ri.getDescriptionRoutePart());
 					if (nextNextTurnDistance > 0) {
 						notificationText.append(" ").append(OsmAndFormatter.getFormattedDistance(nextNextTurnDistance, app).replace(" ", ""))
-								.append(nextNextTurnType != null ? " " + RouteCalculationResult.toString(nextNextTurnType, app, true) : "");
+								.append(nextNextTurnDescription != null ? " " + nextNextTurnDescription : "");
 					}
 					notificationText.append("\n");
 				}
