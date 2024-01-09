@@ -153,6 +153,7 @@ public class NavigationNotification extends OsmandNotification {
 			int turnImminent = 0;
 			int nextTurnDistance = 0;
 			int nextNextTurnDistance = 0;
+			TurnType nextNextTurnType = null;
 			RouteDirectionInfo ri = null;
 			if (routingHelper.isRouteCalculated() && routingHelper.isFollowingMode()) {
 				deviatedFromRoute = routingHelper.isDeviatedFromRoute();
@@ -171,6 +172,7 @@ public class NavigationNotification extends OsmandNotification {
 						turnImminent = r.imminent;
 						NextDirectionInfo next = routingHelper.getNextRouteDirectionInfoAfter(r, calc1, true);
 						nextNextTurnDistance = next.distanceTo;
+						nextNextTurnType = next.directionInfo.getTurnType();
 					}
 				}
 
@@ -183,13 +185,13 @@ public class NavigationNotification extends OsmandNotification {
 					drawable.setTurnImminent(turnImminent, deviatedFromRoute);
 					turnBitmap = drawableToBitmap(drawable);
 				}
-
-				notificationTitle = OsmAndFormatter.getFormattedDistance(nextTurnDistance, app)
-						+ (turnType != null ? " • " + RouteCalculationResult.toString(turnType, app, true) : "");
+				notificationTitle = OsmAndFormatter.getFormattedDistance(nextTurnDistance, app).replace(" ", "");
+						// + (turnType != null ? " " + RouteCalculationResult.toString(turnType, app, true) : "");
 				if (ri != null && !Algorithms.isEmpty(ri.getDescriptionRoutePart())) {
 					notificationText.append(ri.getDescriptionRoutePart());
 					if (nextNextTurnDistance > 0) {
-						notificationText.append(" ").append(OsmAndFormatter.getFormattedDistance(nextNextTurnDistance, app));
+						notificationText.append(" ").append(OsmAndFormatter.getFormattedDistance(nextNextTurnDistance, app).replace(" ", ""))
+								.append(nextNextTurnType != null ? " " + RouteCalculationResult.toString(nextNextTurnType, app, true) : "");
 					}
 					notificationText.append("\n");
 				}
@@ -201,16 +203,16 @@ public class NavigationNotification extends OsmandNotification {
 					if (nextIntermediateIndex < intermediatePoints.size()) {
 						TargetPoint nextIntermediate = intermediatePoints.get(nextIntermediateIndex);
 						notificationText.append(OsmAndFormatter.getFormattedDistance(distanceToNextIntermediate, app))
-								.append(" • ")
+								.append(" ")
 								.append(nextIntermediate.getOnlyName());
 						notificationText.append("\n");
 					}
 				}
 				notificationText.append(distanceStr)
-						.append(" • ").append(timeStr)
-						.append(" • ").append(etaStr);
+						.append(" ").append(timeStr)
+						.append(" ").append(etaStr);
 				if (speedStr != null) {
-					notificationText.append(" • ").append(speedStr);
+					notificationText.append(" ").append(speedStr);
 				}
 			} else {
 				notificationTitle = app.getString(R.string.shared_string_navigation);
