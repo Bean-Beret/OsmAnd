@@ -232,7 +232,8 @@ public class NavigationNotification extends OsmandNotification {
 		Builder notificationBuilder = createBuilder(wearable)
 				.setContentTitle(notificationTitle)
 				.setCategory(NotificationCompat.CATEGORY_NAVIGATION)
-				.setStyle(new BigTextStyle().bigText(notificationText))
+				.setContentText(notificationText)
+				// .setStyle(new BigTextStyle().bigText(notificationText))
 				.setLargeIcon(turnBitmap);
 
 		NavigationSession carNavigationSession = app.getCarNavigationSession();
