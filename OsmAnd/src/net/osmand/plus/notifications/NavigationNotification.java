@@ -185,10 +185,20 @@ public class NavigationNotification extends OsmandNotification {
 					drawable.setTurnImminent(turnImminent, deviatedFromRoute);
 					turnBitmap = drawableToBitmap(drawable);
 				}
-				notificationTitle = OsmAndFormatter.getFormattedDistance(nextTurnDistance, app).replace(" ", "");
-						// + (turnType != null ? " " + RouteCalculationResult.toString(turnType, app, true) : "");
+
+				String[] nextTurnTypeSplit = {turnType != null ? RouteCalculationResult.toString(turnType, app, true) : ""};
+				String nextTurnTypeFull = nextTurnTypeSplit[0];
+				if (nextTurnTypeFull.length() > 1) {
+					nextTurnTypeSplit = nextTurnTypeFull.split(" ", 2);
+				}
+
+				notificationTitle = OsmAndFormatter.getFormattedDistance(nextTurnDistance, app).replace(" ", "") + " " + nextTurnTypeSplit[0];
+						// + (turnType != null ? " " + RouteCalculationResult.toString(turnType, app, true) :
+				if (nextTurnTypeSplit.length > 1) {
+					notificationText.append(nextTurnTypeSplit[1]).append(" ");
+				}
 				if (ri != null && !Algorithms.isEmpty(ri.getDescriptionRoutePart())) {
-					notificationText.append(ri.getDescriptionRoutePart());
+					// notificationText.append(ri.getDescriptionRoutePart());
 					if (nextNextTurnDistance > 0) {
 						notificationText.append(" ").append(OsmAndFormatter.getFormattedDistance(nextNextTurnDistance, app).replace(" ", ""))
 								.append(nextNextTurnType != null ? " " + RouteCalculationResult.toString(nextNextTurnType, app, true) : "");
